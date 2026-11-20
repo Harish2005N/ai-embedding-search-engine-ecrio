@@ -17,7 +17,12 @@ class FaissService:
         self.dimension = EMBEDDING_DIMENSION
         self.index = None
         self.doc_ids = []  # Map FAISS internal IDs to Document Store IDs
-        self.load_index()
+        # Don't load at init - lazy load on first use
+
+    def _ensure_loaded(self):
+        """Lazy load the FAISS index on first access."""
+        if self.index is None:
+            self.load_index()
 
     def initialize_index(self):
         # We use IndexFlatIP for Cosine Similarity (assuming normalized vectors)
@@ -54,8 +59,7 @@ class FaissService:
         """
         Adds a single embedding to the FAISS index.
         """
-        if self.index is None:
-            self.initialize_index()
+        self._ensure_loaded()
         
         # Ensure it's a 2D array for FAISS
         emb_2d = embedding.reshape(1, -1)
@@ -68,9 +72,8 @@ class FaissService:
         """
         Adds multiple embeddings.
         """
-        if self.index is None:
-            self.initialize_index()
-            
+        self._ensure_loaded()
+        
         ids_array = np.array(doc_ids, dtype=np.int64)
         self.index.add_with_ids(embeddings, ids_array)
         self.save_index()
@@ -79,6 +82,8 @@ class FaissService:
         """
         Searches the index for the top_k most similar vectors.
         """
+        self._ensure_loaded()
+        
         if self.index is None or self.index.ntotal == 0:
             return [], []
             
@@ -91,6 +96,7 @@ class FaissService:
         return distances[0], indices[0]
 
     def get_total_vectors(self) -> int:
+        self._ensure_loaded()
         if self.index:
             return self.index.ntotal
         return 0
