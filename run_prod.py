@@ -1,0 +1,5 @@
+import uvicorn
+
+if __name__ == "__main__":
+    print("Starting AI Embedding Search Engine (Production)...")
+    uvicorn.run("app.main:app", host="0.0.0.0", port=10000, reload=False)
