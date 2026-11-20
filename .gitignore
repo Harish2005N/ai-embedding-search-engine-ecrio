@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+data/documents.json
+data/faiss.index
+vector_ops
+vector_ops.so
+venv/
+env/
+.env

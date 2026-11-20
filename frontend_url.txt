@@ -1,0 +1,11 @@
+AI Embedding Search Engine - Frontend URL
+==========================================
+
+Local Development: http://localhost:8000
+
+To start the server:
+  python run.py
+  or
+  uvicorn app.main:app --reload
+
+Then open http://localhost:8000 in your browser.
