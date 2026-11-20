@@ -8,6 +8,8 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.0"
+      - key: EMBEDDING_MODEL
+        value: "all-MiniLM-L6-v2"
     disk:
       name: data-disk
       mountPath: /opt/render/project/src/data
