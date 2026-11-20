@@ -6,7 +6,8 @@ import os
 
 from app.services.mojo_service import normalize_vector_python
 
-MODEL_NAME = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+# Use smaller model for memory-constrained environments
+MODEL_NAME = os.getenv("EMBEDDING_MODEL", "paraphrase-MiniLM-L3-v2")
 logger = logging.getLogger(__name__)
 
 _model = None

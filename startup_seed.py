@@ -123,12 +123,21 @@ async def seed_data():
         doc_ids.append(doc_obj.id)
         texts.append(f"{doc['title']}: {doc['content']}")
     
-    # Generate embeddings
-    logger.info(f"Generating embeddings for {len(texts)} documents...")
-    embeddings = generate_embeddings(texts)
+    # Generate embeddings in batches to avoid memory spike
+    batch_size = 5
+    all_embeddings = []
     
-    # Add to FAISS index
-    faiss_service.add_embeddings(doc_ids, embeddings)
+    logger.info(f"Generating embeddings for {len(texts)} documents in batches of {batch_size}...")
+    for i in range(0, len(texts), batch_size):
+        batch_texts = texts[i:i + batch_size]
+        batch_ids = doc_ids[i:i + batch_size]
+        
+        logger.info(f"  Processing batch {i//batch_size + 1}/{(len(texts) + batch_size - 1)//batch_size}...")
+        batch_embeddings = generate_embeddings(batch_texts)
+        all_embeddings.append(batch_embeddings)
+        
+        # Add to FAISS index immediately (stream to disk)
+        faiss_service.add_embeddings(batch_ids, batch_embeddings)
     
     logger.info(f"Seeded {len(doc_ids)} documents successfully!")
 
