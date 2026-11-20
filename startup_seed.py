@@ -108,7 +108,7 @@ SAMPLE_DOCS = [
 
 async def seed_data():
     """Seed the database with sample documents."""
-    from app.services.document_service import document_service
+    from app.services.document_service import document_store
     from app.services.embedding_service import generate_embeddings
     from app.services.faiss_service import faiss_service
     
@@ -119,8 +119,8 @@ async def seed_data():
     texts = []
     
     for doc in SAMPLE_DOCS:
-        doc_id = document_service.add_document(doc["title"], doc["content"])
-        doc_ids.append(doc_id)
+        doc_obj = document_store.add_document(doc["title"], doc["content"])
+        doc_ids.append(doc_obj.id)
         texts.append(f"{doc['title']}: {doc['content']}")
     
     # Generate embeddings
